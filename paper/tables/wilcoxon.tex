@@ -1,0 +1,17 @@
+\begin{table}[H]
+\centering\small
+\caption{Two-sided paired Wilcoxon tests: GPT-4o cosine scores versus each alternative; Holm family of five comparisons.}
+\label{tab:wilcoxon}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Alternative & Mean difference & Raw $p$ & Adjusted $p$\\
+\midrule
+GPT-4.1 & +0.0069 & $0.430$ & $0.430$\\
+Gemma3--12B & +0.0356 & $2.99\times 10^{-23}$ & $5.98\times 10^{-23}$\\
+Llama3.1--8B & +0.0394 & $1.46\times 10^{-24}$ & $4.39\times 10^{-24}$\\
+CodeGemma--7B & +0.0486 & $1.39\times 10^{-29}$ & $5.58\times 10^{-29}$\\
+Code Llama--7B & +0.0762 & $6.20\times 10^{-56}$ & $3.10\times 10^{-55}$\\
+\bottomrule
+\end{tabular}
+\par\vspace{0.3em}{\footnotesize All comparisons contain 1,318 pairs; zero differences are excluded from signed-rank computation. Positive differences favor GPT-4o.}
+\end{table}

@@ -1,0 +1,20 @@
+\begin{table}[H]
+\centering\small
+\caption{Static workflow acceptance with actionlint 1.7.7; complete-workflow-shaped task scope.}
+\label{tab:workflow}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Model or selector & Accepted & Rate & Abstained & Reference-pass stratum\\
+\midrule
+GPT-4o & 36/335 & 10.75\% & 0 & 36/292\\
+GPT-4.1 & 264/335 & 78.81\% & 0 & 241/292\\
+Gemma3--12B & 47/335 & 14.03\% & 0 & 47/292\\
+Llama3.1--8B & 50/335 & 14.93\% & 0 & 49/292\\
+CodeGemma--7B & 113/335 & 33.73\% & 0 & 108/292\\
+Code Llama--7B & 40/335 & 11.94\% & 0 & 40/292\\
+Syntax fallback & 43/335 & 12.84\% & 0 & 43/292\\
+Checker fallback & 284/335 & 84.78\% & 51 & 260/292\\
+\bottomrule
+\end{tabular}
+\par\vspace{0.3em}{\footnotesize All 335 tasks remain in the main denominator. References themselves pass in 292 cases. The last column uses only that separately defined 292-task stratum. All generated exact-text matches are zero in both strata; acceptance is a static check.}
+\end{table}

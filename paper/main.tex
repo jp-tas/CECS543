@@ -1,0 +1,17 @@
+% !TeX program = pdflatex
+\documentclass[a4paper,11pt]{article}
+\input{preamble}
+\begin{document}
+\hypersetup{pageanchor=false}
+\input{title_page}
+\setcounter{page}{1}
+\hypersetup{pageanchor=true}
+\input{report}
+\clearpage
+\begingroup
+\small
+\setstretch{1}
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+\endgroup
+\end{document}

@@ -1,0 +1,22 @@
+\begin{table}[H]
+\centering\small
+\caption{Independently recomputed agreement and reference-free selection results.}
+\label{tab:rawmetrics}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Model or selector & ROUGE F1 & chrF & $F_{\mathrm{pv}}$ & Leaf F1 & Exact structure\\
+\midrule
+GPT-4o & 0.366 & 0.455 & 0.255 & 0.115 & 37\\
+GPT-4.1 & 0.330 & 0.449 & 0.242 & 0.116 & 4\\
+Gemma3--12B & 0.320 & 0.372 & 0.257 & 0.084 & 34\\
+Llama3.1--8B & 0.292 & 0.383 & 0.216 & 0.074 & 21\\
+CodeGemma--7B & 0.278 & 0.366 & 0.216 & 0.076 & 25\\
+Code Llama--7B & 0.257 & 0.368 & 0.184 & 0.058 & 2\\
+Syntax fallback & 0.366 & 0.456 & 0.259 & 0.116 & 37\\
+Strict fallback & 0.368 & 0.456 & 0.261 & 0.117 & 37\\
+Consensus & 0.340 & 0.406 & 0.283 & 0.127 & 48\\
+Minimal structure & 0.349 & 0.380 & 0.291 & 0.102 & 51\\
+\bottomrule
+\end{tabular}
+\par\vspace{0.3em}{\footnotesize Lexical means use 1,318 examples. Structural means and exact counts use the same 1,293 valid references, assigning zero to invalid generated candidates. Leaf F1 removes the shared root-kind feature. Selectors use only candidate text.}
+\end{table}

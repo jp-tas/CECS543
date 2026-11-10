@@ -1,0 +1,31 @@
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{graphicx,booktabs,tabularx,array,amsmath,amssymb}
+\usepackage{setspace,microtype,enumitem,xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\usepackage{listings,xurl}
+\usepackage{float}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[hidelinks]{hyperref}
+\setstretch{1.15}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+\setlength{\emergencystretch}{2em}
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\renewcommand{\arraystretch}{1.15}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\setlist{leftmargin=*,itemsep=2pt,topsep=4pt,parsep=0pt}
+\definecolor{Accent}{HTML}{234A65}
+\definecolor{Placeholder}{HTML}{A13B23}
+\newcommand{\contact}{\textcolor{Placeholder}{\texttt{[TO\_FILL: contact email]}}}
+\newcommand{\reporttitle}{Beyond Similarity: Replicating and Extending LLM Evaluation for GitHub Actions}
+\hypersetup{pdftitle={\reporttitle},pdfauthor={Revathi Eedala Venkatesulu; Jean-Pierre Tas; Chi Kien Ngo; Sahiti Vuyyuru},pdfsubject={CECS 543: Generative AI and Software Engineering}}
+\pagestyle{plain}
+\lstset{basicstyle=\ttfamily\footnotesize,columns=fullflexible,keepspaces=true,showstringspaces=false,breaklines=true,frame=single,rulecolor=\color{black!25},backgroundcolor=\color{black!2},aboveskip=0.5em,belowskip=0.5em}
+\input{tables/numbers}

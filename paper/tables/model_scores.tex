@@ -1,0 +1,18 @@
+\begin{table}[H]
+\centering\small
+\caption{Recomputed means of the released score columns; 1,318 observations per model.}
+\label{tab:scores}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Model & Cosine & Euclidean sim. & Tree sim. & ROUGE-L & chrF\\
+\midrule
+GPT-4o & 0.688 & 0.589 & 0.663 & 0.562 & 0.508\\
+GPT-4.1 & 0.681 & 0.576 & 0.641 & 0.564 & 0.499\\
+Gemma3--12B & 0.652 & 0.572 & 0.647 & 0.507 & 0.423\\
+Llama3.1--8B & 0.648 & 0.564 & 0.629 & 0.488 & 0.437\\
+CodeGemma--7B & 0.639 & 0.563 & 0.621 & 0.469 & 0.418\\
+Code Llama--7B & 0.611 & 0.545 & 0.609 & 0.474 & 0.416\\
+\bottomrule
+\end{tabular}
+\par\vspace{0.3em}{\footnotesize Similarity scores are reused from the release; summaries are newly computed. Tree scores retain the original parser failure behavior.}
+\end{table}

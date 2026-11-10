@@ -1,0 +1,7 @@
+model_name,context_length
+llama3.1:8b,131072
+codellama:7b,16384
+gemma3:12b,131072
+codegemma:7b,8192
+gpt-4o,
+gpt-4.1,

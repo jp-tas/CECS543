@@ -1,0 +1,7 @@
+model,raw_exact_after_outer_strip,comment_stripped_exact,stored_tree_similarity_one,stored_cosine_at_least_0_999999,stored_tree_one_with_parse_error,both_parseable_raw
+gpt-4o,16,23,38,28,0,1257
+gpt-4.1,0,1,5,2,1,1255
+gemma3-12b,7,21,49,27,4,1252
+llama3.1-8b,4,18,23,20,2,1238
+codegemma-7b,4,13,29,13,4,1250
+codellama-7b,0,1,5,1,3,1288

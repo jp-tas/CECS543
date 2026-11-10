@@ -1,0 +1,14 @@
+\begin{table}[H]
+\centering\small
+\caption{Nonempty BaseLoader acceptance for GPT-4o alone and fixed fallback over archived candidates.}
+\label{tab:fallback}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Scope & $n$ & GPT-4o & Fallback & Recovered\\
+\midrule
+All examples & 1318 & 1281 & 1318 & 37\\
+Loadable documentation references & 1294 & 1257 & 1294 & 37\\
+\bottomrule
+\end{tabular}
+\par\vspace{0.3em}{\footnotesize The second row uses SafeLoader-loadable raw documentation references. Both policies retain 16 exact matches after outer-whitespace stripping; functional success is unmeasured.}
+\end{table}

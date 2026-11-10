@@ -1,0 +1,90 @@
+{
+  "scope": "Recomputed raw-text metrics and offline candidate selection; no new generation or execution.",
+  "rows": 1318,
+  "model_output_pairs": 7908,
+  "valid_structural_reference_count": 1293,
+  "definitions": {
+    "rouge_l_f1": "Whitespace tokens, case-sensitive, 2*LCS length/(reference token count+candidate token count); 0 if either token sequence empty. Raw inputs including comments.",
+    "rouge_l_max": "Same RAW references, candidates, tokenization and LCS as rouge_l_f1, but LCS/min(reference token count,candidate token count), equivalent to max(P,R,F1). This isolates the scoring-formula change on fixed raw inputs.",
+    "chrf": "SacreBLEU 2.5.1 CHRF(char_order=6,word_order=0,beta=2,lowercase=False,whitespace=False,eps_smoothing=False), sentence_score/100; raw inputs including comments.",
+    "path_value_f1": "BaseLoader compose; set overlap F1 of scalar (typed tuple path, node tag, exact decoded scalar string), root-kind token, and empty-container tokens. Mapping order ignored; sequence indices matter. No schema/domain execution or YAML scalar typing. Duplicate scalar mapping keys, complex mapping keys, recursive aliases, expansion overflow, parse errors and empty documents are explicit invalid/unsupported statuses.",
+    "path_value_leaf_f1": "Robustness ablation of path_value_f1 excluding the root-kind token. Scalar leaf path/value and empty-container tokens are retained. Policies remain unchanged; this tests whether gains depend on shared root-kind credit.",
+    "structural_denominator": "Invalid/unsupported Docs references excluded (NA). On all structurally valid references, invalid/unsupported generated outputs score 0. Conditional both-valid means also exported and use smaller explicitly counted denominators.",
+    "exact_bytes": "Exact raw string equality. exact_outer_strip additionally removes only surrounding whitespace; neither is functional equivalence.",
+    "pair_balancing": "Exact raw Docs Description+Code groups; mean each group before averaging groups.",
+    "url_balancing": "Mean within source URL before averaging URLs.",
+    "reference_form": "Evaluation-only stratum: full_workflow_shape means a strictly parseable Docs root mapping contains a literal on key and a jobs value that is a mapping (same criterion as validate_workflows.classify_reference); other_snippet means all other strictly parseable nonempty references. This is not a schema or executable-workflow validity claim and is never used for candidate selection.",
+    "syntax_fallback": "Existing fixed-order BaseLoader non-null/nonempty acceptance, without duplicate key rejection.",
+    "strict_fallback": "First strict-parseable nonempty candidate in fixed model order.",
+    "consensus_medoid": "Strict-parseable candidate maximizing mean pairwise path/value F1 with other strict-parseable candidates. Fixed-order tie breaking; no reference used.",
+    "minimal_structure": "Strict-parseable candidate with fewest structural features; fixed-order tie breaking. No reference used.",
+    "inference": "Two-sided Wilcoxon signed-rank; Holm correction within metric/comparator family. Paired URL-cluster bootstrap resamples URLs retaining all their rows; 10000 draws, seed2026, percentile95CI. Retrospective exploratory analysis; no functional-success claim."
+  },
+  "fixed_order": [
+    "gpt-4o",
+    "gpt-4.1",
+    "gemma3-12b",
+    "llama3.1-8b",
+    "codegemma-7b",
+    "codellama-7b"
+  ],
+  "policies_predefined_before_results": [
+    "syntax_fallback",
+    "strict_fallback",
+    "consensus_medoid",
+    "minimal_structure"
+  ],
+  "reference_error_ids": {
+    "empty_document": [
+      690
+    ],
+    "parse_error": [
+      24,
+      56,
+      390,
+      436,
+      437,
+      439,
+      578,
+      628,
+      631,
+      632,
+      735,
+      891,
+      1023,
+      1024,
+      1026,
+      1168,
+      1169,
+      1170,
+      1201,
+      1204,
+      1205,
+      1236,
+      1315,
+      1317
+    ]
+  },
+  "environment": {
+    "python": "3.12.7",
+    "numpy": "2.1.3",
+    "pandas": "2.2.3",
+    "scipy": "1.14.1",
+    "statsmodels": "0.14.4",
+    "PyYAML": "6.0.2",
+    "sacrebleu": "2.5.1",
+    "rapidfuzz": "3.14.3"
+  },
+  "chrf_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:0|space:no|version:2.5.1",
+  "source_sha256": {
+    "ICSME25-LLM4CI-main/data/GitHubActions_Docs.csv": "f46075cd58a3bf8a9c50fc41eebc9181ba6fa663485e4ce69a075e9d050d36e8",
+    "ICSME25-LLM4CI-main/data/GitHubActions_gpt-4o_output.csv": "7d504f47808af4ca8c88c5a4acdbaf17f768a0c928fe11cd7eaa726ef1e4a7a2",
+    "ICSME25-LLM4CI-main/data/GitHubActions_gpt-4.1_output.csv": "045c250ac7a661e00748ace7d6ecd9e4c55e6df8f5951f9046184ea8caf904e5",
+    "ICSME25-LLM4CI-main/data/GitHubActions_gemma3-12b_output.csv": "cb3a95cf2deb97f1c102734900ae85ee676f92a4d636db1a78592b8137c27c06",
+    "ICSME25-LLM4CI-main/data/GitHubActions_llama3.1-8b_output.csv": "b0e2351e5b150e1781609799b438436c8139c14a36ad0c7b26d4252e5b9981aa",
+    "ICSME25-LLM4CI-main/data/GitHubActions_codegemma-7b_output.csv": "474c3b5e9f26d1e8a8e7ad3de4d05b57b33e6317d56841d2976dd39454c3cd97",
+    "ICSME25-LLM4CI-main/data/GitHubActions_codellama-7b_output.csv": "dfea454f6d55571a2e659410fa0b30da076f4e2d932d640df7dba30bf1e267bb",
+    "ICSME25-LLM4CI-main/results/GitHubActions_Similarity_Scores_Six_LLMs.csv": "9b2df54d585abb4ea4d7ca3cc81d7eb04f20fc998dd9f4493d8dd6f38632c8b3"
+  },
+  "selfchecks": "Passed LCS formula, duplicate keys, recursive aliases, empty doc, container identity, mapping-order invariance, sequence sensitivity, path-key collision avoidance, string-preserving scalar treatment, invalid candidate zero, invalid reference NA."
+}

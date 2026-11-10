@@ -1,0 +1,18 @@
+\begin{table}[H]
+\centering\small
+\caption{Cosine means under alternative aggregation units.}
+\label{tab:aggregation}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Model & 1,318 rows & 690 raw task pairs & 186 source pages\\
+\midrule
+GPT-4o & 0.688 & 0.676 & 0.686\\
+GPT-4.1 & 0.681 & 0.670 & 0.706\\
+Gemma3--12B & 0.652 & 0.638 & 0.664\\
+Llama3.1--8B & 0.648 & 0.643 & 0.656\\
+CodeGemma--7B & 0.639 & 0.631 & 0.660\\
+Code Llama--7B & 0.611 & 0.610 & 0.646\\
+\bottomrule
+\end{tabular}
+\par\vspace{0.3em}{\footnotesize Pair means average all archived responses within each exact raw documentation pair before giving each pair equal weight. Page means give each URL equal weight.}
+\end{table}

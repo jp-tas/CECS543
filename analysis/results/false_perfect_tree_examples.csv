@@ -1,0 +1,15 @@
+ID,model,stored_tree_similarity,reference_parseable,generated_parseable,reference_error,generated_error
+1236,gpt-4.1,1,False,False,"expected '<document start>', but found '{'",mapping values are not allowed here
+82,gemma3-12b,1,False,False,while parsing a block mapping,while scanning a simple key
+483,gemma3-12b,1,False,False,mapping values are not allowed here,mapping values are not allowed here
+917,gemma3-12b,1,False,False,mapping values are not allowed here,mapping values are not allowed here
+1040,gemma3-12b,1,False,False,mapping values are not allowed here,mapping values are not allowed here
+74,llama3.1-8b,1,False,False,mapping values are not allowed here,mapping values are not allowed here
+76,llama3.1-8b,1,False,False,mapping values are not allowed here,mapping values are not allowed here
+414,codegemma-7b,1,False,False,mapping values are not allowed here,mapping values are not allowed here
+440,codegemma-7b,1,False,False,mapping values are not allowed here,mapping values are not allowed here
+662,codegemma-7b,1,False,False,mapping values are not allowed here,mapping values are not allowed here
+920,codegemma-7b,1,False,False,mapping values are not allowed here,mapping values are not allowed here
+92,codellama-7b,1,False,False,while parsing a block mapping,mapping values are not allowed here
+152,codellama-7b,1,False,False,while parsing a block mapping,mapping values are not allowed here
+557,codellama-7b,1,False,False,while parsing a block mapping,mapping values are not allowed here

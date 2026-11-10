@@ -1,0 +1,8 @@
+model,n,parseable,gate_accepted
+reference,1318,1294,1293
+gpt-4o,1318,1281,1281
+gpt-4.1,1318,1277,1277
+gemma3-12b,1318,1276,1276
+llama3.1-8b,1318,1264,1264
+codegemma-7b,1318,1280,1280
+codellama-7b,1318,1312,1312

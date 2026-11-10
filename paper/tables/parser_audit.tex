@@ -1,0 +1,19 @@
+\begin{table}[H]
+\centering\small
+\caption{Raw-text loading results out of 1,318 examples; loaders and nonempty acceptance are kept distinct.}
+\label{tab:parser}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Text source & SafeLoader loads & SafeLoader errors & BaseLoader accepts\\
+\midrule
+Raw documentation reference & 1294 & 24 & 1293\\
+GPT-4o & 1281 & 37 & 1281\\
+GPT-4.1 & 1277 & 41 & 1277\\
+Gemma3--12B & 1276 & 42 & 1276\\
+Llama3.1--8B & 1262 & 56 & 1264\\
+CodeGemma--7B & 1274 & 44 & 1280\\
+Code Llama--7B & 1312 & 6 & 1312\\
+\bottomrule
+\end{tabular}
+\par\vspace{0.3em}{\footnotesize BaseLoader acceptance additionally excludes empty documents. These counts are parser outcomes, not GitHub Actions validity rates.}
+\end{table}

@@ -1,0 +1,249 @@
+\begin{center}
+{\Large\bfseries\reporttitle\par}
+\vspace{0.35em}
+{\normalsize Revathi Eedala Venkatesulu, Jean-Pierre Tas, Chi Kien Ngo, Sahiti Vuyyuru\par}
+{\small California State University, Long Beach\par}
+\end{center}
+
+\begin{abstract}
+Large language models can generate continuous integration configurations, but evaluating their usefulness requires more than textual similarity. This study replicates the statistical analysis of a 2025 GitHub Actions study and extends it using 1,318 examples and 7,908 archived model outputs. We independently calculate lexical and path--value agreement, examine repeated documentation tasks, and evaluate candidate selection with parsing and a pinned static workflow checker. GPT-4o has the highest archived row-weighted mean cosine similarity, 0.688, but its paired difference from GPT-4.1 is not statistically significant. Equal weighting of source pages reverses their ranking. Consensus selection raises path--value F1 from 0.259 to 0.283 relative to syntax-only fallback; the gain persists when root-kind credit is removed, while lexical agreement decreases. On 335 examples shaped as complete workflows, checker-guided fallback accepts 284 candidates, compared with 264 for the strongest individual model, an increase of 5.97 percentage points; 51 cases receive explicit abstention. A reference-integrity audit additionally identifies preprocessing damage and perfect tree scores caused by two parsing failures. The implemented framework separates task scope, reference integrity, syntax, domain checks, and candidate selection. Functional correctness requires execution-based evidence and was not evaluated here.
+\end{abstract}
+\noindent\textbf{Keywords:} generative AI; software engineering; continuous integration; GitHub Actions; replication; YAML validation.
+
+\section{Introduction}
+Generative artificial intelligence (AI) can produce software automation configurations. Large language models (LLMs) support many software engineering activities, but reliable use requires mechanisms for detecting incorrect outputs. Fan et al. emphasize combining traditional software engineering methods with LLMs rather than relying only on generated text~\cite{fan2023}. Continuous integration (CI), which automates building and testing around repository changes, is a useful setting for examining that requirement: a plausible configuration can still omit a required action, alter a trigger, or fail before any test runs.
+
+GitHub Actions represents automation using YAML Ain't Markup Language (YAML) documents. The task differs from ordinary source-code completion because workflow behavior depends on configuration structure and the surrounding repository. Mastropaolo et al. study completion of existing workflow configurations, whereas Zhang et al. evaluate several workflow-related tasks with different prompting conditions~\cite{mastropaolo2024,zhang2024}. Their task definitions and datasets differ from direct generation from documentation descriptions, so their reported success rates cannot be treated as interchangeable baselines.
+
+The selected replication article, by Ghaleb and Rathnayake, evaluates six models on 1,318 description--YAML examples extracted from GitHub Actions documentation~\cite{ghaleb2025}. It reports approximately 0.69 mean cosine similarity for GPT-4o and only about 3\% perfect matches. Repeated documentation examples may affect model rankings, and structural scores may conceal parsing failures.
+
+Our aim is to reproduce the published numerical analysis and develop a reproducible framework for evaluating and selecting generated configurations. The objectives are to verify the archived comparisons, independently calculate reference-agreement measures from raw text, test sensitivity to repeated examples, and evaluate candidate selection using parsing and domain-specific static checks. We address three research questions (RQs):
+\begin{enumerate}[label=\textbf{RQ\arabic*.}]
+\item How do the archived results and independently recomputed measures characterize model performance?
+\item How do repeated description--reference pairs and source-page weighting affect model comparisons?
+\item Can parser-aware and domain-aware candidate selection improve static acceptance and reference agreement among the archived candidates?
+\end{enumerate}
+
+The scope is the supplied historical dataset, six archived model-output files, and the published analysis implementation. All experiments operate on existing outputs; inference and workflow execution are outside the experimental design.
+
+\section{Proposed Methodology}
+All measurements use the supplied replication package~\cite{package}; original files remain unchanged. Three scripts produce the evidence: \texttt{run\_analysis.py} for archived scores and parser diagnostics, \texttt{recompute\_metrics.py} for raw-text and structural agreement, and \texttt{validate\_workflows.py} for actionlint diagnostics and workflow selection. They reside in the companion \texttt{analysis/} directory and export per-example results and reproducibility metadata.
+
+\subsection{Replication boundary and metric audit}
+We recompute model means and statistical comparisons from the released score table using the original measurement definitions. New lexical and structural agreement measures are calculated from the unchanged documentation references and archived outputs. The original embedding and tree-distance columns remain archived measurements.
+
+Table~\ref{tab:metrics} describes the five released score columns using the implementation rather than relying only on their labels. The original paper describes cosine and Euclidean comparisons using term frequency--inverse document frequency (TF-IDF) vectors. In contrast, the code loads \texttt{all-MiniLM-L6-v2} through Sentence Transformers and encodes each string. That model is an embedding model~\cite{sbert}; its cosine score is not a direct measure of exact token overlap. We therefore refer to the archived quantity as cosine similarity without asserting that it is a TF-IDF score.
+
+\begin{table}[H]
+\centering\small
+\caption{Operational meaning of the released similarity columns. All are interpreted as similarities, with larger values indicating closer agreement under that implementation.}
+\label{tab:metrics}
+\begin{tabularx}{\linewidth}{@{}lY@{}}
+\toprule
+Released column & Implementation and interpretation\\
+\midrule
+CosineSimilarity & Cosine between sentence-transformer embeddings of comment-cleaned strings.\\
+EuclideanDistance & Stored as $1/(1+\lVert u-v\rVert_2)$, so the column contains similarity rather than raw distance.\\
+TreeEditDistance & Active function uses $\max(0,\min(1,1-d/(2\max(n_r,n_g))))$ for tree edit distance $d$ and node counts $n_r,n_g$. Parser exceptions return an empty root.\\
+ROUGE-L & Recall-Oriented Understudy for Gisting Evaluation using longest common subsequences, but code returns the maximum of precision, recall, and F-score rather than only F-score.\\
+chrF & Character n-gram F-score, lowercased with whitespace retained; stored on a 0--1 scale.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Two tree-similarity functions share a name; Python uses the second definition. The prompt script combines title and description, although the displayed paper prompt presents a description field. It also saves reference strings using \texttt{strip()}, while its output filenames differ from those expected by the analysis script.
+
+\subsection{Independent raw-text and structural measurements}
+The new measurements use raw documentation references and raw archived responses, preserving indentation and comments. We calculate the F1 form of Recall-Oriented Understudy for Gisting Evaluation using longest common subsequences (ROUGE-L) over whitespace-delimited tokens~\cite{lin2004}. For longest common subsequence length $L$ and token counts $n_r,n_g$, the score is $2L/(n_r+n_g)$, with zero assigned to an empty sequence. We also calculate the character n-gram F-score (chrF)~\cite{popovic2015} with SacreBLEU 2.5.1: character orders 1--6, no word n-grams, $\beta=2$, case preserved, whitespace excluded, effective-order handling, and epsilon smoothing disabled. A separate raw-text maximum-of-precision/recall calculation isolates the original ROUGE aggregation choice. These new variants differ from the released preprocessing and cannot be compared as if only the model had changed.
+
+For structural agreement, a string-preserving BaseLoader composition represents each scalar by its exact decoded value and its tuple of mapping keys and sequence indices. Scalar node tags, a root-kind feature, and explicit empty-container features preserve structural distinctions. Mapping-key order is ignored; sequence order matters. Duplicate mapping keys, complex keys, cyclic aliases, empty documents, and parsing failures are recorded explicitly. For reference feature set $R$ and generated set $G$, path--value F1 is
+\[
+ F_{\mathrm{pv}}=\frac{2|R\cap G|}{|R|+|G|}.
+\]
+Invalid references are excluded from this structural comparison. On the fixed set of valid references, invalid generated candidates receive zero; conditional means over two valid parses are exported separately. A feature-identical configuration is called an exact structural match, which permits formatting changes but does not assert behavioral equivalence. We also repeat scoring without the root-kind feature to check sensitivity to that design choice.
+
+\subsection{Statistical comparison and aggregation}
+For RQ1, we calculate each model's mean on all 1,318 rows for all five metrics. We repeat the original two-sided paired Wilcoxon signed-rank comparisons of GPT-4o cosine scores against the five alternatives and apply Holm correction to that family of five tests. We also repeat Spearman correlations between description word count and the four GPT-4o metrics selected by the released correlation function, with a separate Holm correction. The code omits chrF from that function even though the paper describes five metrics. A corrected $p<0.05$ is interpreted as evidence of a distributional difference under the test assumptions, not as proof of practical superiority.
+
+For RQ2, we distinguish three estimands. The row mean weights each released example equally. The pair-balanced mean gives equal weight to each exact description--reference group in the unchanged documentation table: first average model scores within a repeated pair, then average the group means. Keeping all archived outputs within a group avoids arbitrarily selecting the first response. The source-page mean first averages within each source uniform resource locator (URL), then gives each of the 186 source pages equal weight. These quantities answer different questions: expected score for a released row, for a distinct archived task pair, and for a source page.
+
+We additionally estimate uncertainty in the row-weighted GPT-4o minus GPT-4.1 mean cosine difference using a paired source-URL cluster bootstrap. Each of 10,000 resamples draws 186 URLs with replacement and retains all rows belonging to each sampled URL, including multiplicities. We recompute the row-weighted difference and report percentile 95\% intervals with random seed 2026. This preserves model pairing and within-page dependence, but does not eliminate dependence from duplicated examples appearing on different pages. Bootstrap intervals describe this dataset and sampling convention, not a population of all software repositories.
+
+\subsection{Parser-aware evaluation and candidate selection}
+For RQ3, we use two explicit loading policies~\cite{pyyaml}. \texttt{SafeLoader} reproduces the loading behavior used in the original tree function. \texttt{BaseLoader} supplies a separate syntax-oriented check that avoids implicit Boolean conversion of keys such as \texttt{on}. BaseLoader checks whether the text can be loaded, but does not validate the GitHub Actions schema, unique mapping keys, expression semantics, or command behavior. Empty documents are rejected by the candidate-selection rule. YAML's representation and typing rules must be distinguished from the domain rules of a workflow~\cite{yaml}.
+
+The audit loads the original documentation reference, the reference saved with each model output, and the common reference field retained in the merged score table. These texts are checked separately because the supplied files are not fully synchronized. We apply the released comment-removal function exactly when investigating the original failure path. For tree-score interpretation, each pair receives an explicit reference/output loading status. If either fails, structural similarity is treated as unavailable in the parser-aware view; it is not replaced with a fabricated empty tree.
+
+The fixed candidate priority is GPT-4o, GPT-4.1, Gemma3, Llama3.1, CodeGemma, and Code Llama. Four reference-free selectors are specified before their evaluation: syntax fallback selects the first nonempty BaseLoader candidate; strict fallback additionally rejects the structural error states above; consensus selects the strict candidate with the highest mean pairwise path--value F1 to the other eligible candidates; and minimal structure selects the strict candidate with the fewest features. Ties follow the fixed priority. The consensus and minimality rules test whether agreement among candidates or restraint in adding structure improves reference agreement. Neither rule sees the reference answer.
+
+All policies are evaluated on the same tasks, retaining abstentions as zero candidate agreement on valid references. Policy differences use paired URL-cluster percentile intervals with 10,000 resamples and seed 2026. The comparison is exploratory: no selector is tuned on a held-out dataset, and improved reference agreement is not interpreted as improved functional correctness.
+
+\subsection{Static workflow validation and domain-aware fallback}
+Domain validation is restricted to a task scope defined before checker execution: the raw reference must load as a mapping with an \texttt{on} key and a mapping-valued \texttt{jobs} field. The rule identifies complete-workflow-shaped examples, not proven correct workflows. Other snippets and action-definition-shaped mappings are reported separately. Every reference and all six candidates in this scope are checked, and a second stratum contains the references that themselves pass the checker.
+
+We run actionlint 1.7.7, released January 19, 2025, to check workflow structure, expressions, action usage, and related static constraints~\cite{actionlint}. Its official release archive is verified against the published checksum. Text is passed unchanged through standard input in a neutral temporary directory, with ShellCheck and Pyflakes integrations disabled. No repository-specific configuration, companion workflow files, or generated commands are executed. Acceptance means exit status zero under this configuration. Local action paths and reusable-workflow references are flagged because their repository context is unavailable.
+
+Domain-aware fallback applies the same candidate priority but selects the first checker-accepted candidate, abstaining if all six are rejected. References determine the retrospective task stratum, never which candidate is chosen. We report checker acceptance over every task in the stratum, accepted-candidate counts, abstentions, and exact reference agreement. The candidate-selection interface requires an explicitly declared fragment or workflow scope.
+
+\section{Case Study and Data Preparation}
+The selected International Conference on Software Maintenance and Evolution (ICSME) article provides a documentation-derived GitHub Actions benchmark. The local release contains the documentation table, six archived model-output files, a combined similarity table, and scripts for collection, prompting, and scoring. It includes GPT-4o, GPT-4.1, Llama3.1--8B, Gemma3--12B, Code Llama--7B, and CodeGemma--7B. We retain the release's model labels and do not generalize from them to all general-purpose or code-specialized models.
+
+All seven input tables and the combined score table contain the same 1,318 unique identifiers. We align by identifier rather than relying on incidental row order and verify that paired comparisons have complete observations. Source addresses are treated as historical provenance fields, not fetched again to replace the benchmark with today's documentation. The analysis exports input Secure Hash Algorithm 256-bit (SHA-256) hashes and dependency versions so the supplied snapshot remains identifiable.
+
+\input{tables/data_profile}
+
+The 1,318 identifiers do not represent 1,318 independent tasks: descriptions and code fragments recur, sometimes under different documentation pages (Table~\ref{tab:data}). Exact matching is intentionally conservative; it does not identify paraphrases or semantically equivalent YAML. Pair balancing therefore reduces only the most directly observable repetition.
+
+The archived references also contain discrepancies beyond indentation: the GPT-4o file has five reference cells containing \texttt{\#NAME?} instead of the documentation text (identifiers 350, 475, 851, 1121, and 1122), while GPT-4.1 has two (350 and 851). The common reference column in the score table differs from the cleaned GPT-4o cached reference at six identifiers. We do not infer how these discrepancies arose. Raw documentation pairs are therefore used for grouping, and per-model cached references are used when checking the original parser failure path.
+
+The dataset mixes complete-workflow-shaped examples with partial mappings, step lists, scalar examples, and action definitions. The predefined scope classification yields 335 workflow-shaped references, 814 mapping fragments, 83 sequence fragments, 54 action-definition-shaped mappings containing a \texttt{runs} key, 24 parse failures, and eight scalar or empty examples. Thus, only about one quarter of the examples enter full-workflow static validation. GitHub's workflow syntax describes a domain-specific document containing triggers and jobs~\cite{githubsyntax}, but documentation often explains one field at a time. We consequently avoid calling every loadable item a valid workflow or every fragment lacking a trigger defective. For path--value scoring, 1,293 references are structurally eligible; the 24 parse failures and one empty document are excluded. Lexical metrics still use all 1,318 texts.
+
+\clearpage
+\section{Results and Discussion}
+
+\subsection{RQ1: Reanalysis of the released results}
+\input{tables/model_scores}
+
+GPT-4o has the highest mean cosine similarity at approximately 0.688, with GPT-4.1 close behind at approximately 0.681 (Table~\ref{tab:scores}). Code Llama has the lowest mean cosine similarity. These measurements agree with the original rounded cosine values.
+
+\input{tables/wilcoxon}
+
+GPT-4o differs significantly from the four smaller open models in this row-level comparison, but the comparison with GPT-4.1 has corrected $p=0.430$ (Table~\ref{tab:wilcoxon}). The highest mean therefore supports a descriptive ranking, while this test does not establish GPT-4o's superiority over GPT-4.1. Failure to reject a difference is also not an equivalence result. A practical equivalence claim would require an explicit tolerance and a suitable analysis.
+
+\input{tables/correlations}
+
+\begin{samepage}
+Longer descriptions are weakly associated with higher archived scores (Table~\ref{tab:correlation}), but correlation does not show that lengthening a prompt would improve the resulting workflow. Task complexity, repetition, and documentation style may all influence the relationship. The reproduced tests use rows as paired observations, as the original implementation does.
+\par\end{samepage}
+
+\input{tables/raw_metrics}
+
+GPT-4o has the highest raw ROUGE F1, 0.366, and chrF, 0.455 (Table~\ref{tab:rawmetrics}). Structural rankings depend on representation: Gemma3 leads the root-augmented path--value measure at 0.257, while GPT-4.1 and GPT-4o are close on the leaf-only variant at approximately 0.116 and 0.115. The values describe reference overlap rather than a percentage of correct workflows.
+
+For GPT-4o, the archived maximum-style score is 0.562; recalculating maximum precision/recall/F1 on raw text gives 0.555, and changing only that aggregation to F1 gives 0.366. For GPT-4.1, the corresponding values are 0.564, 0.539, and 0.330. This isolates a substantial formula effect on identical raw inputs; the remaining difference combines reference, preprocessing, and artifact-version effects. It should not be interpreted as a change in the models themselves.
+
+On the 335 workflow-shaped references, GPT-4.1 has higher raw ROUGE F1 than GPT-4o, 0.435 versus 0.367, and higher leaf agreement, 0.149 versus 0.084.
+
+\subsection{RQ2: Sensitivity to repeated examples and source pages}
+\input{tables/aggregation}
+
+Pair balancing lowers GPT-4o's mean from 0.688 to 0.676 and places Llama3.1 above Gemma3, reversing their row-level order (Table~\ref{tab:aggregation}). Giving each source page equal weight produces a larger change at the top: GPT-4.1 scores 0.706 and GPT-4o 0.686.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figures/aggregation.pdf}
+\caption{Cosine similarity under row, description--reference pair, and source-page weighting. The unit of aggregation changes the relative position of models, especially the GPT-4o/GPT-4.1 comparison.}
+\label{fig:aggregation}
+\end{figure}
+
+Figure~\ref{fig:aggregation} compares model scores under row, task-pair, and source-page weighting. Neither aggregation estimates success on a new repository without assumptions about how that repository's tasks resemble the benchmark.
+
+The paired URL-cluster bootstrap gives a row-weighted GPT-4o minus GPT-4.1 mean cosine difference of \CosineDifference{}, with a 95\% percentile interval of \ClusterInterval{}. The interval includes zero.
+
+\subsection{RQ3: Reference integrity and structural-score diagnostics}
+\input{tables/parser_audit}
+
+Under SafeLoader, 1,294 of 1,318 original documentation references load successfully (Table~\ref{tab:parser}). Applying \texttt{strip()} to those strings reduces this to 1,256. After the original comment-removal operation, the corresponding counts are 1,296 and 1,258. Thus, 38 references that load after comment removal cease to load when the preceding \texttt{strip()} is introduced. This transformation can remove indentation before the first line while leaving subsequent lines unchanged.
+
+An illustrative case is identifier 82, an upload-artifact step list. Its original reference begins with an indented sequence item. Saving the string with \texttt{strip()} removes only the initial indentation of that item, changing its relationship to later lines. The Gemma3 output and the scored reference both fail the original parser, yet their released tree-similarity score is 1.0. In the active tree function, both exceptions become the same empty root, yielding zero edit distance. Identifiers 92 for Code Llama and 74 for Llama3.1 expose the same failure mechanism.
+
+Across the six models, the audit identifies \FalsePerfectCount{} published perfect tree scores associated with two SafeLoader failures after the original cleaning. These rows are not evidence of perfect structural agreement. The parser-aware extension marks them unavailable and records both error states in the exported table of all 7,908 model--reference pairs; validly loaded pairs retain their archived tree score. The audit also preserves raw text: the original regular expression for inline comment removal can affect hash characters inside quoted values, so its output should not silently replace the original configuration in a validity assessment.
+
+These parsing failures affect particular observations and do not show that parser errors explain the six-model ranking. Parser coercion and tree overlap do not establish identical workflow behavior.
+
+\subsection{Candidate selection: structural gains and tradeoffs}
+Table~\ref{tab:fallback} shows that syntax-only fallback raises nonempty parser acceptance from 1,281 to 1,318 cases, recovering 37 candidates; exact raw-text agreement remains 16 cases. Relative to Code Llama, the strongest individual model by parser acceptance at 1,312 cases, this adds six accepted cases.
+
+\input{tables/fallback}
+
+Consensus raises root-augmented path--value F1 from 0.259 to 0.283 relative to syntax fallback (Table~\ref{tab:rawmetrics}). Removing root-kind credit still gives 0.127 versus 0.116: the paired improvement is 0.0115, with a URL-cluster 95\% interval of [0.0042, 0.0204], using 1,293 fixed reference cases and 184 source pages. Strict fallback alone scores 0.117 on this leaf-only variant; consensus improves on it by 0.0104, with a cluster interval of [0.0030, 0.0192]. The structural gain therefore extends beyond rejecting duplicate keys. Consensus also raises exact structural matches from 37 to 48. Its leaf-only improvement persists under equal task-pair weighting, 0.120 versus 0.107, and equal-page weighting, 0.111 versus 0.089.
+
+Consensus lowers raw ROUGE F1 from 0.366 to 0.340 and chrF from 0.456 to 0.406 relative to syntax fallback. The minimal-structure heuristic has the highest root-augmented score, 0.291, but its leaf-only score falls to 0.102. Its apparent improvement depends on rewarding the shared root-kind feature and is therefore not robust to the measurement choice. The root-removal analysis was added as a sensitivity check after inspecting the preliminary structural results; all policies and both representations are retained in the report.
+
+\subsection{Domain-aware workflow selection}
+\input{tables/workflow_validation}
+
+On the 335 workflow-shaped tasks, references pass actionlint in 292 cases (87.16\%; Table~\ref{tab:workflow}). GPT-4.1 is the strongest individual model under this configuration, passing in 264 cases (78.81\%). Domain-aware fallback selects a checker-accepted output for 284 tasks (84.78\%), an increase of 20 cases or 5.97 percentage points over that baseline. It abstains on the remaining 51 tasks; those tasks remain in the coverage denominator.
+
+The syntax-only policy accepts a YAML candidate on every task but passes actionlint in only 43 cases (12.84\%). Figure~\ref{fig:workflow} shows the same gap for individual models. On the separate stratum whose references pass the checker, domain-aware fallback covers 260/292 tasks (89.04\%) versus GPT-4.1's 241/292 (82.53\%), with 32 abstentions. All generated exact raw-text matches are zero in both workflow strata.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figures/workflow_validation.pdf}
+\caption{Parser and actionlint acceptance of each model on the same 335 workflow-shaped examples. The domain checker tests constraints that a generic YAML loader does not enforce.}
+\label{fig:workflow}
+\end{figure}
+
+GPT-4o receives a missing-\texttt{on} diagnostic on 237 tasks and action-usage diagnostics on 192 tasks; these categories overlap. Other diagnoses concern obsolete action runtimes, runner labels, expressions, and workflow-specific fields. Under identifier 28, for example, GPT-4o emits a jobs mapping without the workflow trigger; fallback selects the checker-accepted GPT-4.1 candidate. Under identifier 42, GPT-4.1 uses a malformed local-action path and fallback reaches CodeGemma.
+
+The domain result is conditional on the pinned checker and available context. Among the 43 rejected references, 21 have syntax-check diagnoses and 14 have runner-label diagnoses, with possible category overlap. Custom runners, local actions, and reusable workflows can depend on missing repository context.
+
+\subsection{Framework for generation, validation, and escalation}
+Figure~\ref{fig:framework} presents the selection stages, and Table~\ref{tab:framework} records their implementation status. The interface in \texttt{select\_configuration.py} accepts candidate files in priority order, returns the selected YAML, and records the attempted candidates and diagnostic decisions. The static stages are evaluated here; execution and human intent review remain subsequent stages.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.45cm,box/.style={draw=Accent,rounded corners=2pt,fill=Accent!4,text width=12.5cm,align=left,inner sep=7pt,font=\small},arr/.style={-{Stealth[length=2mm]},color=Accent}]
+\node[box] (a) {\textbf{1. Specify task and scope}\quad Record required behavior; distinguish a workflow from a fragment.};
+\node[box,below=of a] (b) {\textbf{2. Preserve evidence and obtain candidates}\quad Keep source text, model identity, and transformations.};
+\node[box,below=of b] (c) {\textbf{3. Parse each candidate}\quad Record loading failures and empty documents; retain eligible candidates.};
+\node[box,below=of c] (d) {\textbf{4. Check scope and select}\quad For workflows, apply actionlint; return a passing candidate or abstain.};
+\node[box,below=of d] (e) {\textbf{5. Validate intent and behavior (future)}\quad Use requirement assertions, isolated runs, and review.};
+\node[box,below=of e] (f) {\textbf{6. Report outcomes and revise}\quad Separate coverage, similarity, functional success, cost, and failures.};
+\draw[arr] (a)--(b);\draw[arr] (b)--(c);\draw[arr] (c)--(d);\draw[arr] (d)--(e);\draw[arr] (e)--(f);
+\end{tikzpicture}
+\caption{Implemented static-selection framework and its proposed behavioral-validation extension. Evidence preservation, parsing, selection, actionlint checks, and reporting are evaluated on archived candidates; generation and execution are outside the experiment.}
+\label{fig:framework}
+\end{figure}
+
+\begin{table}[H]
+\centering\small
+\caption{Implementation boundary of the framework. An accepted parser result is an intermediate state, not an approval for deployment.}
+\label{tab:framework}
+\begin{tabularx}{\linewidth}{@{}lYY@{}}
+\toprule
+Stage & This study & Required next evidence\\
+\midrule
+Task and reference integrity & IDs, hashes, repetition and transformation audit & Independently reviewed task scope and expected behavior\\
+Candidate acquisition & Six archived candidates per example & New controlled generation with pinned settings\\
+Parser gate and fallback & Implemented and evaluated offline & Broader cases and comparison of fallback orders\\
+Domain constraints & actionlint implemented & Repository context and requirement assertions\\
+Intent, execution and review & Future extension & Isolated runs, behavioral tests, human judgments\\
+Outcome reporting & Implemented for scores and acceptance & Runtime, cost, repair effort and functional success\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+For a complete-workflow task, the command-line implementation applies the same pinned checks as the experiment and abstains if none of the supplied candidates passes. For fragments it applies the declared parser gate; prospective domain checking would require a fragment-specific schema or a controlled harness. The structural selectors provide separately evaluated exploratory alternatives when reference overlap is the target. Subsequent behavioral validation should compare matched tasks and candidate budgets using functional success and total cost.
+
+\section{Limitations}
+Feature identity does not establish YAML semantic equivalence, and a checker-accepted workflow may still omit required behavior, rely on unavailable secrets, or fail at runtime. The original paper's approximately 3\% perfect-match statement lacks a sufficiently explicit definition for us to reproduce that percentage identically. Its 90-case qualitative analysis remains prior work; this extension does not claim new expert labels or inter-rater agreement.
+
+The new lexical and structural scores are independently calculated, while the original embedding and tree-distance columns are reused. Raw-text preprocessing, reference versions, and score definitions differ between the archived and new experiments; comparisons across those variants are descriptive. The structural representation preserves scalar spelling but does not fully model tags on nonempty containers or mapping keys, merge semantics, expression evaluation, or command behavior.
+
+Repeated documentation tasks affect statistical independence. Pair balancing and URL clustering provide sensitivity checks, but exact matching misses paraphrases and duplicated tasks can cross page boundaries. The selectors were defined before measuring their results; policy comparison, the later root-removal check, and the decision to emphasize robust consensus gains are exploratory rather than independent confirmation. A holdout evaluation is needed before generalizing selection performance.
+
+The workflow comparison is conditional on the 335 shape-defined tasks and actionlint 1.7.7 with external integrations disabled. Custom runner labels and repository-local dependencies can produce diagnoses that require unavailable context; conversely, a zero-diagnostic result cannot establish that remote actions or services exist or behave as intended. The 2025 checker reduces temporal drift but cannot reconstruct the authors' exact environment. Fallback can inspect up to six distinct archived responses, whereas the individual-model baseline supplies one. The measured coverage gain therefore uses a larger candidate pool; inference cost, generation latency, and equal-budget repeated sampling were not measured.
+
+External validity is limited to documentation-derived tasks, six historical model labels, and GitHub Actions. Public documentation may have appeared in training data. Model size, training, and hosting differ, so the results do not identify a causal effect of code specialization.
+
+\section{Implication of Research in Other Areas}
+Evaluation of generated operational artifacts should preserve raw evidence, declare whether the task requires a complete artifact or a fragment, and apply a domain-specific validator after parsing. Infrastructure manifests, container definitions, and other automation languages could use the same sequence, but each would require its own schema and behavioral oracle.
+
+In software testing and requirements engineering, repeated tasks can affect weighting, and structural improvements can accompany worse lexical agreement. Reporting population, metric definition, acceptance coverage, and abstention together makes those tradeoffs reviewable.
+
+For developer-facing tools, returning a checker-accepted candidate or an explicit abstention is a concrete interface behavior that can be implemented without a reference answer. Its effect on review and repair effort requires evaluation.
+
+\section{Future Work}
+A prospective evaluation should use independently collected tasks, split by source page and near-duplicate family before any policy choice. A controlled experiment should compare single-model repeated sampling, multi-model fallback, and consensus under the same candidate or inference budget. Functional success, checker acceptance, total cost, and reviewer effort should be reported separately, with uncertainty at the task-cluster level.
+
+Execution-based evaluation needs repository fixtures and explicit requirement assertions. Complete workflows should run in an isolated environment; fragments need a harness defined before generation. Independent reviewers could assess omissions, additions, and intent mismatches while reporting disagreements. Domain checks, consensus selection, and bounded diagnostic repair should also be combined in an ablation study: this paper evaluates their static and overlap outcomes separately, so the best way to combine them remains an empirical question.
+
+A further replication could recompute the archived embedding and tree-distance measures from preserved inputs, contrasting the released preprocessing with parser-aware alternatives.
+
+\section{Conclusions}
+This study reproduces the archived quantitative pattern and extends the evaluation of generated GitHub Actions configurations using the existing 1,318-example dataset. GPT-4o has the highest row-level archived cosine mean, but its paired comparison with GPT-4.1 is not significant; page-balanced weighting reverses their order.
+
+Consensus selection improves leaf-only structural agreement from 0.116 to 0.127 relative to syntax fallback, with a positive URL-cluster interval, while reducing lexical agreement. Domain-aware fallback returns checker-accepted candidates on 284 of 335 workflow-shaped tasks versus 264 for the strongest individual model, and explicitly abstains on 51. The reference audit and root-feature ablation further show why preprocessing integrity and metric sensitivity belong in the evaluation.
+
+The measured gains concern structural agreement and static acceptance in an archived candidate pool. Functional correctness requires behavioral evaluation.
