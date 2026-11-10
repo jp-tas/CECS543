@@ -171,3 +171,36 @@ ax.grid(axis='x', alpha=.2);ax.set_axisbelow(True)
 ax.legend(frameon=False,fontsize=9,loc='upper center',bbox_to_anchor=(.5,1.18),ncol=2)
 fig.tight_layout();fig.savefig(ROOT/'paper/figures/workflow_validation.pdf');plt.close(fig)
 print('Built raw-metric and workflow-validation tables and the static-acceptance figure.')
+
+# Preserve actual archived strings in the appendix rather than retyping examples.
+docs = pd.read_csv(ROOT / 'ICSME25-LLM4CI-main/data/GitHubActions_Docs.csv',
+                   keep_default_na=False).set_index('ID')
+def archived_model(model):
+    return pd.read_csv(ROOT / f'ICSME25-LLM4CI-main/data/GitHubActions_{model}_output.csv',
+                       keep_default_na=False).set_index('ID')
+
+def listing(text, caption, label):
+    assert r'\end{lstlisting}' not in text
+    return (r'\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,caption={' + caption
+            + '},label={lst:' + label + '}]\n' + text.rstrip('\n')
+            + '\n' + r'\end{lstlisting}' + '\n')
+
+gemma = archived_model('gemma3-12b')
+original, cached = docs.loc[82, 'Code'], gemma.loc[82, 'Code']
+assert original.strip() == cached
+(TABLES / 'reference_case.tex').write_text(
+    '% Generated from raw ID 82 fields; indentation is preserved.\n'
+    + r'\begin{minipage}[t]{0.48\linewidth}' + '\n'
+    + listing(original, 'ID 82: documentation reference.', 'original82')
+    + r'\end{minipage}\hfill\begin{minipage}[t]{0.48\linewidth}' + '\n'
+    + listing(cached, 'ID 82: cached Gemma3 reference.', 'cached82')
+    + r'\end{minipage}' + '\n')
+gpt4o, gpt41 = archived_model('gpt-4o'), archived_model('gpt-4.1')
+(TABLES / 'workflow_cases.tex').write_text(
+    '% Generated from complete archived candidates; no code is executed.\n'
+    + r'\begin{minipage}[t]{0.48\linewidth}' + '\n'
+    + listing(gpt4o.loc[28, 'LLM_YML_Output'], 'ID 28: GPT-4o candidate.', 'workflow28')
+    + r'\end{minipage}\hfill\begin{minipage}[t]{0.48\linewidth}' + '\n'
+    + listing(gpt41.loc[42, 'LLM_YML_Output'], 'ID 42: GPT-4.1 candidate.', 'workflow42')
+    + r'\end{minipage}' + '\n')
+print('Built appendix listings directly from archived reference and candidate fields.')

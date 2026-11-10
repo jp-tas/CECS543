@@ -1,0 +1,27 @@
+% Generated from complete archived candidates; no code is executed.
+\begin{minipage}[t]{0.48\linewidth}
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,caption={ID 28: GPT-4o candidate.},label={lst:workflow28}]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: npm install
+      - run: npm test
+\end{lstlisting}
+\end{minipage}\hfill\begin{minipage}[t]{0.48\linewidth}
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,caption={ID 42: GPT-4.1 candidate.},label={lst:workflow42}]
+name: Use Hello World Composite Action
+on: [push]
+jobs:
+  test-composite-action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: .github/actions/hello-world-composite-action
+\end{lstlisting}
+\end{minipage}

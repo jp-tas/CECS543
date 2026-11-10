@@ -1,0 +1,207 @@
+{
+  "date": "2026-11-10",
+  "scope": "Independent isolated reruns of run_analysis.py, recompute_metrics.py, and validate_workflows.py; actionlint content checks repeated without cache.",
+  "csv_files_compared": 39,
+  "all_csvs_byte_identical": true,
+  "csv_files": [
+    {
+      "file": "analysis/results/agreement_definitions.csv",
+      "sha256": "dcf1eb4a5b64a9d6797732a8e9cbc64cd0ca65c5fbf5303e9f5a3330c5170ee9",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/docs_reference_transformation_details.csv",
+      "sha256": "72dfcf6bbe0e54ab7cb568b4da680a432e593713c6775d6968a1a7f870fc7526",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/docs_reference_transformation_summary.csv",
+      "sha256": "e8f29a0cbcd9f6d3618a375d01bbc698f5c96adce9217362ee06679d1fd7e285",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/duplicate_group_sizes.csv",
+      "sha256": "1d2878439367444d7ec93bb544df73c1af031f9936d8d8cdc89b8cf01f4e8eca",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/fallback_selected_outputs.csv",
+      "sha256": "26028fafb105e16dc0aa1d0230749d6cd08ad2a7eddf368a970407691f01b9fc",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/fallback_selection.csv",
+      "sha256": "f5c2f802fd85552cd758de2822fc993faf691aee0cc0218e17342954c79eab88",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/fallback_selection_counts.csv",
+      "sha256": "f2162822098b33cd34fd921081cc95b9f425e47392a59699d113cf98b7074bec",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/fallback_summary.csv",
+      "sha256": "68bbee59ad233816ca2f7a7285d81c0e1b60bbf04871ed843932eae5ab3d03bd",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/false_perfect_tree_examples.csv",
+      "sha256": "54c9c05be41bbac925861983cea3e1136ae78850ca4e3f9feafb710f700d65c4",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/pair_averaged_scores.csv",
+      "sha256": "f9336905dd88c5a4cb662e21fd399c30b16a8e2c0e4c7557c623a3f0367d31c9",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/parser_aware_tree_scores.csv",
+      "sha256": "d7ae25bd14f0ff05e1cd8bf5f3e51793dce891fe4a82f463281e3d25c896ab51",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/reference_transformation_audit.csv",
+      "sha256": "a9748fc658a6866683953a2b05b366e40d82f49b47be5a9b521f10104a5b8073",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/similarity_summary.csv",
+      "sha256": "575e2c33d283e2a3f9cac7b2543cac1065dccd5061101a00fbeaa554c11c4f45",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/spearman_description_length.csv",
+      "sha256": "668cb02719f81b20a96794a7faeea4cd405d8c1ea08a684327cada5ca03b333f",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/stored_score_pair_averaged_scores.csv",
+      "sha256": "74bddcf3ccbb38b2ec1f4ea977ad8099d2ee304d4d42b197f1e2107cd25978f7",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/url_averaged_scores.csv",
+      "sha256": "d0f05242dffcf033fd74be8d4a4a2da4c6d8550cb1708bff959f7959b9c0b718",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/url_cluster_bootstrap.csv",
+      "sha256": "0aa4ba4ec0b1a0a78933c5f2ad1cff3805a925c2b8cc29ba45ebba9a971ced34",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/wilcoxon_cosine.csv",
+      "sha256": "5b3b96ee7cc8c68faecd7d4ccf1b2b8f6450db50da22585b6766b483a3031047",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/yaml_baseloader_details.csv",
+      "sha256": "b9514e3a3f1e5cd8a82bdca855a5229bd6c5c83cbbae7ae90aff7da8c78a2210",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/yaml_baseloader_summary.csv",
+      "sha256": "c6d29acb781c6f68cb702202517eb24e500d9ea3ae3d93a08ec5f25dd7914936",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/yaml_parse_details.csv",
+      "sha256": "8bffe62bbb776134355a46efdca7e6d02840e9a3f717510396b1f005d832c2f6",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/yaml_parse_summary.csv",
+      "sha256": "64beea97590e621b49b4210c65bd517948ec232a87f49dd7500e292b3797bef4",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/recomputed_pair_metrics.csv",
+      "sha256": "fb96b2765d945e57bec0dba6e757d5a688c273a278a74cc47b47e879d5a14598",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/recomputed_parse_diagnostics.csv",
+      "sha256": "7a1319582b48941e0b9d69dcb784f1ca0b8c277f3f78fe9ba9bd9c652331bc49",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/recomputed_parse_status_summary.csv",
+      "sha256": "feeba9973c7844b16bacb071ed29fdb07ff59d2767886f3f3c303f0738b72221",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/recomputed_policy_comparisons.csv",
+      "sha256": "59cd4399bfa86381fbd42370e336d2374daeaa1e1f9d4e57aadedd216feb7407",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/recomputed_policy_selection.csv",
+      "sha256": "d41727153a681b9fb0b46f5246198e7666a2650d9847347aeaae82f6e95d6627",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/recomputed_policy_selection_counts.csv",
+      "sha256": "6214842f2abec66d2bad6ef9e15875e8c61c07f34b715223b4884d7c6a271f41",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/recomputed_rankings.csv",
+      "sha256": "fd303c8e1b8a5e840c9525a3be8678ccacfd7590a5a103b359da8831a0dd1903",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/recomputed_reference_form_summary.csv",
+      "sha256": "8f92afc54e7d3f6dcd8f06e3fd6d35178ee583f978ff371fbcd670b735d7e2b3",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/recomputed_selected_outputs.csv",
+      "sha256": "61b3ae7a7fed69977effbd9065d8108bd8f1f279c7853f2fe86762c80439c43e",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/recomputed_summary.csv",
+      "sha256": "3971212887d65d21ab2d710173cacdd561e26e1ebe824977c432f5fc6550bf76",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/workflow_chosen_models.csv",
+      "sha256": "223b6a272c97390bde5131e350c60976ff3136546cdcb916e16d3610267efe0f",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/workflow_diagnostic_summary.csv",
+      "sha256": "7c00fff48dc0105270f727e0f5928f5fa693ad7d380409c6d9a12e588b758883",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/workflow_lint_details.csv",
+      "sha256": "48bbb30f5105da3776a5523600e075efc6951f79567f7d06e8e5778142a523a5",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/workflow_lint_diagnostics.csv",
+      "sha256": "7752a497d11ec74b9518308a94f6be93d22cadfd01fcb9da69ca1887e7eca29b",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/workflow_scope.csv",
+      "sha256": "90728b7a69e88128d6596d58020591a6585a44d5ef7b7b3a2a15a9304376cf95",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/workflow_selection.csv",
+      "sha256": "5ae535e93334286d4dcc20accf9101c8498989eed1ae6ae24c4963e0433cf254",
+      "byte_identical": true
+    },
+    {
+      "file": "analysis/results/workflow_summary.csv",
+      "sha256": "300524baa452c12a59fad51542ef7cac8bb23d30a4d4885944026fb83835efa3",
+      "byte_identical": true
+    }
+  ],
+  "fresh_actionlint_cache_logically_identical": true,
+  "archived_cache_sha256": "28e5ed72f53dd0b347782993eed385b1ee47d063edfe428893dda40333feff59",
+  "boundary": "These checks reproduce the archived-data analyses and static checker outcomes; they do not verify historical model inference or execute workflows.",
+  "fresh_checker_unique_texts": 1359
+}

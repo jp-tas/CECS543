@@ -9,14 +9,14 @@ All figures, numerical tables, the bibliography and the cover logo are
 included. Python and access to the original dataset are not needed to
 compile this manuscript.
 
-Replace the contact-email placeholder in preamble.tex before submission.
-It was left as a placeholder at the author's explicit request.
+The contact line has been removed at the author's request.
 
 The separate Reproducibility ZIP contains the original data, analysis
 scripts and all numerical results, including new raw-text/structural
 metrics and pinned actionlint workflow checks. The report distinguishes
 the performed static experiments from future behavioral validation.
-The original dataset was not modified.
+The original dataset was not modified. The appendix maps the evidence files
+and preserves worked cases extracted directly from the archived inputs.
 
 Original research and data credit:
 Taher A. Ghaleb and Dulina Rathnayake (2025).

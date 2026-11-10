@@ -1,0 +1,20 @@
+% Generated from raw ID 82 fields; indentation is preserved.
+\begin{minipage}[t]{0.48\linewidth}
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,caption={ID 82: documentation reference.},label={lst:original82}]
+  - name: 'Upload Artifact'
+    uses: actions/upload-artifact@v4
+    with:
+      name: my-artifact
+      path: my_file.txt
+      retention-days: 5
+\end{lstlisting}
+\end{minipage}\hfill\begin{minipage}[t]{0.48\linewidth}
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,caption={ID 82: cached Gemma3 reference.},label={lst:cached82}]
+- name: 'Upload Artifact'
+    uses: actions/upload-artifact@v4
+    with:
+      name: my-artifact
+      path: my_file.txt
+      retention-days: 5
+\end{lstlisting}
+\end{minipage}
